@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="sama">
+<meta name="theme-color" content="#FBF4E4">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>sama</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oranienbaum&family=Great+Vibes&family=Manrope:wght@400;500;700&display=swap">
+<style>
+:root{--ink:#141414;--muted:#5A5446;--cream:#FBF4E4;--yellow:#F7D96B;--pink:#F4B6D2;--lav:#C9C4F5;--mint:#A8E2D0;--coral:#F7A08F;--serif:Oranienbaum,'Times New Roman',serif;--script:'Great Vibes',cursive;--sans:Manrope,-apple-system,system-ui,sans-serif}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--cream);color:var(--ink);font-family:var(--sans);overscroll-behavior:none}
+button,input,textarea{font-family:var(--sans);color:var(--ink)}
+button{cursor:pointer}
+#app{position:fixed;inset:0;max-width:480px;margin:0 auto;overflow:hidden;text-align:center}
+.screen{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(env(safe-area-inset-top) + 18px) 18px calc(env(safe-area-inset-bottom) + 104px)}
+.screen.sub{padding-bottom:calc(env(safe-area-inset-bottom) + 30px)}
+.stack{min-height:100%;display:flex;flex-direction:column;justify-content:space-evenly;gap:12px}
+.title{font-family:var(--serif);font-size:34px;text-transform:uppercase;line-height:1;white-space:nowrap}
+.script{font-family:var(--script);font-size:28px;line-height:1.05;white-space:nowrap}
+.h{font-family:var(--serif);font-size:21px;text-transform:uppercase;line-height:1.1;white-space:nowrap}
+.card{background:#fff;border-radius:22px;padding:14px 16px}
+.small{font-size:12px;color:var(--muted)}
+.nw{white-space:nowrap}
+.row{display:flex;gap:10px}
+.row>*{flex:1;min-width:0}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.chip{border:none;border-radius:18px;padding:9px 13px;min-height:38px;font-size:13px;font-weight:700;background:#fff}
+.chip.on{background:var(--ink);color:#fff}
+.btn{border:none;border-radius:20px;padding:12px 22px;min-height:46px;font-size:15px;font-weight:700;background:var(--ink);color:#fff}
+.btn.light{background:var(--yellow);color:var(--ink)}
+.dashed{background:transparent;border:2px dashed var(--ink);border-radius:20px;padding:12px;min-height:46px;font-size:14px;font-weight:700;width:100%}
+.item{display:block;width:100%;border:none;background:var(--cream);border-radius:14px;padding:12px 10px;font-size:14px;text-align:center}
+.item.done{background:var(--mint);color:#0B4A3A}
+.back{width:44px;height:44px;border-radius:50%;background:#fff;border:none;font-size:22px;font-weight:700;display:flex;align-items:center;justify-content:center}
+textarea,input[type=text],input[type=number]{width:100%;border:none;border-radius:14px;padding:12px;font-size:16px;text-align:center;background:#F3F1FD;resize:none}
+textarea::placeholder,input::placeholder{color:#8A8270;text-align:center}
+.bar{height:10px;border-radius:5px;overflow:hidden}
+.bar>div{height:100%;background:var(--ink);border-radius:5px}
+.prayer{font-family:var(--serif);font-size:20px;line-height:1.35;white-space:pre-line}
+nav{position:absolute;left:18px;right:18px;bottom:calc(env(safe-area-inset-bottom) + 14px);height:64px;background:var(--ink);border-radius:32px;display:flex;align-items:center;justify-content:space-around;z-index:5}
+nav button{background:transparent;border:none;width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0}
+nav svg{stroke:#FBF4E4}
+nav button.on svg{stroke:var(--ink)}
+.sheet-bg{position:fixed;inset:0;background:rgba(20,20,20,.45);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--cream);width:100%;max-width:480px;border-radius:28px 28px 0 0;padding:20px 18px calc(env(safe-area-inset-bottom) + 20px);display:flex;flex-direction:column;gap:10px;max-height:90dvh;overflow:auto}
+.x{border:none;background:transparent;color:var(--muted);font-size:13px;padding:6px}
+.pin{position:fixed;inset:0;background:var(--ink);color:var(--cream);z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;text-align:center}
+.dots{display:flex;gap:14px}
+.dots span{width:14px;height:14px;border-radius:50%;border:2px solid var(--pink)}
+.dots span.f{background:var(--pink)}
+.keys{display:grid;grid-template-columns:repeat(3,72px);gap:14px}
+.keys button{width:72px;height:72px;border-radius:50%;border:none;background:#2A2A2A;color:var(--cream);font-family:var(--serif);font-size:30px}
+.keys button.t{background:transparent;font-family:var(--sans);font-size:14px}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<pattern id="p0" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="#A8E2D0"/><circle cx="6" cy="6" r="2.4" fill="#4FB892"/></pattern>
+<pattern id="p1" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="#F4B6D2"/><rect width="5" height="10" fill="#E0789E"/></pattern>
+<pattern id="p2" width="16" height="16" patternUnits="userSpaceOnUse"><rect width="16" height="16" fill="#C9C4F5"/><polygon points="8,3 9.3,6.6 13,6.7 10,9 11.1,12.6 8,10.5 4.9,12.6 6,9 3,6.7 6.7,6.6" fill="#8F86E8"/></pattern>
+<pattern id="p3" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="#F7D96B"/><circle cx="6" cy="6" r="2.4" fill="#D9A92B"/></pattern>
+<pattern id="p4" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="#F7A08F"/><rect width="5" height="10" fill="#E27A63"/></pattern>
+</defs></svg>
+<div id="app"></div>
+<div id="sheet"></div>
+<div id="lock"></div>
+<script>
+'use strict';
+const KEY = 'sama-v1';
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const pad = (n) => String(n).padStart(2, '0');
+const dkey = (d = new Date()) => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+const mkey = () => dkey().slice(0, 7);
+const uid = () => Math.random().toString(36).slice(2, 9);
+const rub = (n) => Math.round(Number(n) || 0).toLocaleString('ru-RU');
+const dayNum = () => Math.floor((Date.now() - new Date().getTimezoneOffset() * 60000) / 86400000);
+
+const DEFAULT_HABITS = [
+  { id: 'h1', name: 'Зарядка', who: 'заботится о своем теле', mini: 'встать на коврик', after: 'умылась', prep: 'коврик у кровати', reward: 'любимая песня' },
+  { id: 'h2', name: 'Медитация', kind: 'med', who: 'спокойная и собранная', mini: '3 глубоких вдоха', after: 'кофе', prep: 'наушники рядом', reward: 'кофе в тишине' },
+  { id: 'h3', name: 'Молитва', kind: 'pray', who: 'начинает день с Богом', mini: 'одна короткая молитва', after: 'проснулась', prep: 'молитвослов на виду', reward: 'свеча и тишина' },
+  { id: 'h4', name: 'Книга', who: 'читает и растет', mini: 'одна страница', after: 'легла спать', prep: 'книга на подушке', reward: 'отметка в трекере' }
+];
+const fresh = () => ({ v: 1, goal: 0, cushion: { goal: 0, saved: 0 }, why: '', envelopes: [], tasks: [], habits: DEFAULT_HABITS.map((h) => ({ ...h })), hlog: {}, moods: {}, petitions: [], ideas: [], newMe: {}, feel: {}, reh: {}, evening: {}, signs: [], meds: [], medRun: null, thoughts: [], qShift: 0, pin: null });
+let S;
+try { S = Object.assign(fresh(), JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) { S = fresh(); }
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { alert('Не получилось сохранить. Освободи место на телефоне.'); } };
+
+const QUOTES = [
+  ['Нельзя начать жизнь сначала', 'но можно продолжить по-другому'],
+  ['Умоляя изменить ситуацию,', 'помни: ее послали изменить тебя'],
+  ['Сложно?', 'значит, ты растешь'],
+  ['Выдохни старый воздух,', 'чтобы вдохнуть новый'],
+  ['Мотивация заканчивается,', 'дисциплина доводит до конца'],
+  ['Не бойся,', 'только веруй'],
+  ['Маленький шаг каждый день', 'сильнее рывка раз в месяц'],
+  ['Все случается', 'вовремя']
+];
+const PRAYERS = {
+  'страшно': ['Господь просвещение мое\nи Спаситель мой, кого убоюся?', 'Псалом 26'],
+  'больно': ['Господи, Ты видишь мою боль.\nУтешь меня и дай сил.', 'своими словами'],
+  'нет сил': ['Приидите ко Мне вси труждающиися\nи обремененнии, и Аз упокою вы', 'Евангелие от Матфея, 11:28'],
+  'тревожно': ['Не бойся,\nтолько веруй', 'Евангелие от Марка, 5:36'],
+  'нужны деньги': ['Святителю отче Спиридоне,\nпомоги мне в нужде моей', 'обращение к святителю'],
+  'прошу мудрости': ['Господи, вразуми меня,\nчто делать и как поступить', 'своими словами'],
+  'спокойно': ['Слава Тебе, Господи,\nза этот тихий день', 'своими словами'],
+  'радостно': ['Благодарю Тебя, Господи,\nза радость', 'своими словами'],
+  'благодарна': ['Слава Богу\nза все', 'святитель Иоанн Златоуст']
+};
+const MOOD_COLOR = { 'страшно': '#F7A08F', 'тревожно': '#F7A08F', 'больно': '#F4B6D2', 'нет сил': '#C9C4F5', 'нужны деньги': '#F7D96B', 'прошу мудрости': '#F7D96B', 'спокойно': '#A8E2D0', 'радостно': '#A8E2D0', 'благодарна': '#A8E2D0' };
+const SPIRIDON = 'О всеблаженне святителю Спиридоне,\nвеликий угодниче Христов\nи преславный чудотворче!\nПредстояй на небеси Престолу Божию\nс лики Ангел, призри милостивым оком\nна предстоящия зде люди\nи просящия твоея сильныя помощи.\nУмоли благосердие Человеколюбца Бога,\nда не осудит нас по беззаконием нашим,\nно да сотворит с нами\nпо милости Своей!\nИспроси нам у Христа и Бога нашего\nмирное и безмятежное житие,\nздравие души и тела\nи во всем всякое благополучие.';
+const PSALM22 = 'Господь пасет мя,\nи ничтоже мя лишит.\nНа месте злачне, тамо всели мя,\nна воде покойне воспита мя.\nДушу мою обрати,\nнастави мя на стези правды,\nимене ради Своего.\nАще бо и пойду посреди сени смертныя,\nне убоюся зла, яко Ты со мною еси;\nжезл Твой и палица Твоя,\nта мя утешиста.\nУготовал еси предо мною трапезу\nсопротив стужающим мне,\nумастил еси елеом главу мою,\nи чаша Твоя упоявающи мя, яко державна.\nИ милость Твоя поженет мя\nвся дни живота моего,\nи еже вселити ми ся в дом Господень\nв долготу дний.';
+const TOPICS = [
+  { t: 'не умею зарабатывать' },
+  { t: 'как менять сценарий' },
+  { t: 'проверка мысли' }
+];
+const NEWME = [
+  ['утро', 'Как проходит утро новой меня?\nВо сколько встаю?\nЧто чувствую?'],
+  ['деньги', 'Как новая я говорит о деньгах?\nСколько она стоит?'],
+  ['страх', 'Что делает новая я,\nкогда ей страшно?'],
+  ['отношения', 'Каких людей новая я\nпускает в свою жизнь?'],
+  ['тело', 'Как новая я заботится\nо себе и своем теле?'],
+  ['дом', 'Где живет новая я?\nЧто ее окружает?']
+];
+const FEELS = ['спокойствие', 'благодарность', 'любовь', 'уверенность', 'радость'];
+const TABS = [
+  { id: 'today', bg: '#FBF4E4', on: '#F7D96B' },
+  { id: 'money', bg: '#F7D96B', on: '#F7D96B' },
+  { id: 'habits', bg: '#DDF3EA', on: '#A8E2D0' },
+  { id: 'love', bg: '#E6E3FB', on: '#C9C4F5' },
+  { id: 'faith', bg: '#F9DCE8', on: '#F4B6D2' }
+];
+const ICONS = [
+  '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9H3z"/></svg>',
+  '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 9l9 6 9-6"/></svg>',
+  '<svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v1.6M7.2 2.8l1 1.2M16.8 2.8l-1 1.2M4.6 6.4l1.4.5M19.4 6.4l-1.4.5"/><circle cx="12" cy="7.4" r="2.3"/><path d="M7.6 17v-3c0-2.4 2-3.4 4.4-3.4s4.4 1 4.4 3.4v3"/><path d="M12 12.2v3.6"/><path d="M4 19.4c0-2.3 4-2.8 8-.8 4-2 8-1.5 8 .8 0 1.6-3 1.6-8-.4-5 2-8 2-8 .4z"/></svg>',
+  '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/></svg>',
+  '<svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5C10.2 5 9.2 8 9.2 11.5V15l-2.4 2.4c-.5.5-.4 1.3.2 1.7l3.2 1.9c.8.5 1.8 0 1.8-1z"/><path d="M12 3.5c1.8 1.5 2.8 4.5 2.8 8V15l2.4 2.4c.5.5.4 1.3-.2 1.7l-3.2 1.9c-.8.5-1.8 0-1.8-1z"/></svg>'
+];
+const TAB_NAMES = ['Сегодня', 'Деньги', 'Привычки', 'Я равно любовь', 'Вера'];
+
+let tab = 0, sub = null, scrollKeep = 0;
+
+const monthSum = (env) => env.entries.filter((e) => e.date.startsWith(mkey())).reduce((a, e) => a + e.amount, 0);
+const haveMonth = () => S.envelopes.reduce((a, e) => a + monthSum(e), 0);
+const hDone = (id, d = dkey()) => !!(S.hlog[d] && S.hlog[d][id]);
+const setH = (id, v, d = dkey()) => { S.hlog[d] = S.hlog[d] || {}; if (v) S.hlog[d][id] = true; else delete S.hlog[d][id]; };
+const anyHabitOn = (d) => S.hlog[d] && Object.keys(S.hlog[d]).length > 0;
+function streak() {
+  let n = 0; const d = new Date();
+  if (!anyHabitOn(dkey(d))) d.setDate(d.getDate() - 1);
+  while (anyHabitOn(dkey(d))) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+const votes = () => Object.values(S.hlog).reduce((a, o) => a + Object.keys(o).length, 0);
+const yesterday = () => { const d = new Date(); d.setDate(d.getDate() - 1); return dkey(d); };
+const plural = (n, a, b, c) => { const m = n % 10, h = n % 100; return m === 1 && h !== 11 ? a : m >= 2 && m <= 4 && (h < 10 || h >= 20) ? b : c; };
+const markKind = (kind) => { const h = S.habits.find((x) => x.kind === kind); if (h) setH(h.id, true); };
+
+function envSvg(env, i) {
+  const p = 'url(#p' + (i % 5) + ')';
+  const sum = monthSum(env);
+  const line = env.plan ? rub(sum) + ' из ' + rub(env.plan) : rub(sum);
+  return '<svg viewBox="0 0 160 140" role="img" aria-label="' + esc(env.name + ', ' + line) + '" style="display:block;width:100%">' +
+    '<rect x="10" y="50" width="140" height="85" rx="4" fill="' + p + '"/><polygon points="10,50 80,8 150,50" fill="' + p + '"/>' +
+    '<rect x="24" y="20" width="112" height="82" rx="3" fill="#FFFDF8"/>' +
+    '<text x="80" y="38" text-anchor="middle" font-family="Oranienbaum,serif" font-size="' + (env.name.length > 16 ? 11 : 12) + '" fill="#3D2E00">' + esc(env.name.toLowerCase()) + '</text>' +
+    '<text x="80" y="59" text-anchor="middle" font-family="Oranienbaum,serif" font-size="20" fill="#141414">' + rub(sum) + '</text>' +
+    (env.plan ? '<text x="80" y="74" text-anchor="middle" font-family="Oranienbaum,serif" font-size="10" fill="#5A5446">из ' + rub(env.plan) + '</text>' : '') +
+    '<polygon points="10,52 80,100 10,135" fill="' + p + '"/><polygon points="10,52 80,100 10,135" fill="#000" opacity=".07"/>' +
+    '<polygon points="150,52 80,100 150,135" fill="' + p + '"/><polygon points="150,52 80,100 150,135" fill="#000" opacity=".07"/>' +
+    '<polygon points="10,135 80,90 150,135" fill="' + p + '"/></svg>';
+}
+const arcs = (n) => {
+  const k = Math.min(n, 8); let d = 'M4 24'; for (let i = 0; i < k; i++) { const x = 4 + i * 32; d += ' Q' + (x + 16) + ' 2 ' + (x + 32) + ' 24'; }
+  const end = 4 + k * 32;
+  return '<svg width="100%" height="26" viewBox="0 0 320 26" aria-hidden="true" style="margin:6px 0">' + (k ? '<path d="' + d + '" fill="none" stroke="#141414" stroke-width="1.5"/>' : '') +
+    (end < 316 ? '<line x1="' + end + '" y1="24" x2="316" y2="24" stroke="#141414" stroke-width="1.5" stroke-dasharray="5 5"/>' : '') +
+    '<circle cx="4" cy="24" r="2.5" fill="#141414"/><circle cx="316" cy="24" r="2.5" fill="#141414"/></svg>';
+};
+function habitDots() {
+  const cols = ['#A8E2D0', '#C9C4F5', '#F4B6D2', '#F7D96B', '#F7A08F'];
+  return '<div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;font-size:12px">' + S.habits.map((h, i) => {
+    const on = hDone(h.id);
+    return '<button data-a="hab" data-id="' + h.id + '" style="background:none;border:none;padding:0;font-size:12px">' +
+      '<div style="width:46px;height:46px;border-radius:50%;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;font-weight:700;' +
+      (on ? 'background:' + cols[i % 5] : 'border:2px dashed #8A8270') + '">' + (on ? '✓' : '') + '</div>' + esc(h.name) + '</button>';
+  }).join('') + '</div>';
+}
+
+/* ---------- screens ---------- */
+function scToday() {
+  const q = QUOTES[(dayNum() + S.qShift) % QUOTES.length];
+  const need = S.goal, have = haveMonth(), left = Math.max(0, need - have), pct = need ? Math.min(100, Math.round(have / need * 100)) : 0;
+  const open = S.tasks.filter((t) => !t.done).slice(0, 3);
+  const st = streak();
+  const date = new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }).toUpperCase();
+  return '<div class="stack">' +
+    '<div style="position:relative"><div class="small" style="letter-spacing:2px">' + date + '</div>' +
+    '<button data-a="go" data-v="settings" aria-label="Настройки" style="position:absolute;right:0;top:-12px;background:none;border:none;padding:10px;color:#8A8270"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8A8270" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg></button></div>' +
+    '<button data-a="quote" style="background:none;border:none;padding:4px 0;min-height:64px"><div class="h" style="font-size:22px">' + esc(q[0]) + '</div><div class="script" style="color:#C2410C">' + esc(q[1]) + '</div></button>' +
+    '<button data-a="tab" data-v="2" class="card" style="border:none"><div class="h">Дисциплина</div><div class="script" style="font-size:22px;color:#0B4A3A">' + st + ' ' + plural(st, 'день', 'дня', 'дней') + ' подряд</div>' + arcs(st) + '</button>' +
+    habitDots() +
+    '<button data-a="tab" data-v="1" style="border:none;background:var(--yellow);border-radius:28px;padding:16px 20px">' +
+    (need ? '<div class="small nw" style="color:#5C4600">До цели месяца осталось</div><div class="nw" style="font-family:var(--serif);font-size:46px;line-height:1.05">' + rub(left) + ' ₽</div>' +
+      '<div class="bar" style="background:#E6C34A;margin:10px 0 8px"><div style="width:' + pct + '%"></div></div><div class="small nw" style="color:#5C4600">' + rub(have) + ' из ' + rub(need) + ' · ' + pct + '%</div>'
+      : '<div class="h">Цель месяца</div><div class="small">Задай сумму в настройках</div>') + '</button>' +
+    '<div class="card"><div class="h" style="margin-bottom:10px">3 задачи дня</div><div style="display:flex;flex-direction:column;gap:8px">' +
+    (open.length ? open.map((t) => { const d = t.steps.filter((s) => s.done).length; return '<button class="item nw" data-a="go" data-v="task" data-id="' + t.id + '">' + esc(t.title) + (t.steps.length ? ' <span style="color:#8A8270">· ' + d + '/' + t.steps.length + '</span>' : '') + '</button>'; }).join('') : '<div class="small">Задач пока нет</div>') +
+    '<button class="x" data-a="newTask">+ задача</button></div></div>' +
+    '</div>';
+}
+
+function scMoney() {
+  const need = S.goal, have = haveMonth(), c = S.cushion, cp = c.goal ? Math.min(100, Math.round(c.saved / c.goal * 100)) : 0;
+  const topic = TOPICS[dayNum() % TOPICS.length];
+  return '<div class="stack">' +
+    '<div><div class="title">Мои деньги</div><div class="script" style="color:#8A3B0C">каждый рубль на счету</div></div>' +
+    '<div class="row" style="gap:8px"><div class="card" style="padding:9px 4px;border-radius:18px"><div class="small">Нужно</div><div style="font-weight:700">' + rub(need) + '</div></div>' +
+    '<div class="card" style="padding:9px 4px;border-radius:18px"><div class="small">Есть</div><div style="font-weight:700">' + rub(have) + '</div></div>' +
+    '<div style="background:var(--ink);border-radius:18px;padding:9px 4px"><div class="small" style="color:var(--yellow)">Разрыв</div><div style="font-weight:700;color:#fff">' + rub(Math.max(0, need - have)) + '</div></div></div>' +
+    '<div class="h">Мои конверты</div>' +
+    '<div class="grid2" style="gap:6px">' + S.envelopes.map((e, i) => '<button data-a="go" data-v="env" data-id="' + e.id + '" style="background:none;border:none;padding:0">' + envSvg(e, i) + '</button>').join('') +
+    '<button data-a="newEnv" aria-label="Новый конверт" style="background:none;border:none;padding:0"><svg viewBox="0 0 160 140" style="display:block;width:100%"><rect x="10" y="50" width="140" height="85" rx="4" fill="none" stroke="#141414" stroke-width="1.6" stroke-dasharray="5 4"/><polyline points="10,50 80,8 150,50" fill="none" stroke="#141414" stroke-width="1.6" stroke-dasharray="5 4"/><text x="80" y="100" text-anchor="middle" font-family="Oranienbaum,serif" font-size="16" fill="#141414">+ новый конверт</text></svg></button></div>' +
+    '<button data-a="cushion" class="card" style="border:none"><div style="font-weight:700" class="nw">Подушка свободы</div><div class="bar" style="background:var(--cream);margin:8px 0 6px"><div style="width:' + cp + '%"></div></div><div class="small nw">' + rub(c.saved) + ' из ' + rub(c.goal) + '</div></button>' +
+    '<div class="row"><button data-a="go" data-v="ideas" style="border:none;background:var(--cream);border-radius:22px;padding:12px 6px"><div style="font-weight:700" class="nw">Банк идей</div><div class="small nw">мысль и цена ›</div></button>' +
+    '<button data-a="why" style="border:none;background:var(--coral);border-radius:22px;padding:12px 6px;color:#4A1A0E"><div style="font-weight:700" class="nw">Ради чего</div><div style="font-size:11px;line-height:1.35;margin-top:2px">' + esc(S.why || 'нажми и напиши') + '</div></button></div>' +
+    '<button data-a="go" data-v="psy" style="border:none;background:var(--ink);border-radius:22px;padding:12px 16px"><div class="h" style="color:var(--yellow)">Психология денег</div><div class="small nw" style="color:#B8B2A4">тема дня, каждый день новая</div><div class="script" style="color:#fff;font-size:22px">' + esc(topic.t) + '</div></button>' +
+    '</div>';
+}
+
+function scHabits() {
+  const y = yesterday(), today = dkey();
+  const missed = S.habits.filter((h) => !hDone(h.id, y) && !hDone(h.id, today) && anyHabitOn(y));
+  const st = streak();
+  return '<div class="stack">' +
+    '<div><div class="title">Привычки</div><div class="script" style="color:#0B4A3A">я женщина, которая…</div></div>' +
+    '<div class="row"><div class="card" style="padding:12px 6px"><div class="small nw">голосов за новую себя</div><div style="font-family:var(--serif);font-size:40px;line-height:1.05">' + votes() + '</div></div>' +
+    '<div class="card" style="padding:12px 6px"><div class="small nw">дисциплина</div><div style="font-family:var(--serif);font-size:40px;line-height:1.05">' + st + ' ' + plural(st, 'день', 'дня', 'дней') + '</div></div></div>' +
+    (missed.length ? '<div style="background:var(--ink);color:#fff;border-radius:22px;padding:12px 16px"><div class="h" style="color:var(--mint);font-size:19px">Не пропускай дважды</div><div style="font-size:12px;line-height:1.5">Пропустить один день нормально.<br>Вчера пропущено: ' + esc(missed.map((h) => h.name).join(', ')) + '.<br>Сегодня не пропускаем.</div></div>' : '') +
+    '<div style="display:flex;flex-direction:column;gap:8px">' + S.habits.map((h) => {
+      const on = hDone(h.id);
+      return '<button data-a="hab" data-id="' + h.id + '" style="border:none;border-radius:20px;padding:12px 10px;background:' + (on ? 'var(--mint)' : '#fff') + '">' +
+        '<div class="h" style="font-size:20px">' + (on ? '✓ ' : '') + esc(h.name) + '</div><div class="script" style="font-size:20px;color:#0B4A3A">' + esc(h.who) + '</div>' +
+        (h.mini ? '<div class="small nw" style="margin-top:4px;font-size:11px">2 минуты: ' + esc(h.mini) + (h.after ? ' · после: ' + esc(h.after) : '') + '</div>' : '') +
+        (h.prep || h.reward ? '<div class="small nw" style="font-size:11px">' + (h.prep ? 'с вечера: ' + esc(h.prep) : '') + (h.prep && h.reward ? ' · ' : '') + (h.reward ? 'награда: ' + esc(h.reward) : '') + '</div>' : '') + '</button>';
+    }).join('') + '</div>' +
+    '<button class="dashed" data-a="newHabit" style="border-color:#0F6E56;color:#0B4A3A">+ новая привычка</button>' +
+    '<div class="small" style="font-size:11px;line-height:1.5">Каждое выполнение это голос за ту, кем ты становишься.<br>По книге Джеймса Клира «Атомные привычки».</div>' +
+    '</div>';
+}
+
+function scLove() {
+  const d = dkey();
+  const days = new Set([...Object.keys(S.newMe), ...Object.keys(S.feel), ...Object.keys(S.reh), ...Object.keys(S.evening), ...S.meds.map((m) => m.date)]).size;
+  const ti = S.nmTopic != null ? S.nmTopic : dayNum() % NEWME.length;
+  const run = S.medRun;
+  const todayMeds = S.meds.filter((m) => m.date === d);
+  const ev = S.evening[d] || {};
+  return '<div class="stack">' +
+    '<div><div class="title">Я = любовь</div><div class="script" style="color:#3C3489">кем я становлюсь</div><div class="small" style="color:#3C3489;margin-top:4px">день практики: ' + days + '</div></div>' +
+    '<div class="card"><div class="h">Чувство дня</div><div class="small nw" style="margin:2px 0 8px">Какое состояние новой меня я проживаю сегодня?</div><div class="chips">' +
+    FEELS.map((f) => '<button class="chip' + (S.feel[d] === f ? ' on' : '') + '" style="' + (S.feel[d] === f ? '' : 'background:#E6E3FB;color:#26215C') + '" data-a="feel" data-v="' + f + '">' + f + '</button>').join('') + '</div></div>' +
+    '<div class="card" style="display:flex;flex-direction:column;gap:8px"><label for="nm" class="h">Новая я</label><div class="small nw">Тема сегодня: ' + NEWME[ti][0] + '</div>' +
+    '<textarea id="nm" rows="4" data-bind="newMe" placeholder="' + esc(NEWME[ti][1]) + '">' + esc(S.newMe[d] || '') + '</textarea>' +
+    '<div class="chips">' + NEWME.map((x, i) => '<button class="chip' + (i === ti ? ' on' : '') + '" style="' + (i === ti ? '' : 'background:#E6E3FB;color:#26215C') + ';font-size:12px;min-height:34px;padding:7px 11px" data-a="nmTopic" data-v="' + i + '">' + x[0] + '</button>').join('') + '</div></div>' +
+    '<div style="background:var(--lav);border-radius:22px;padding:14px 16px;color:#26215C"><div class="h">Медитация</div>' +
+    '<div class="small nw" style="color:#26215C">' + (run ? 'Начала в ' + new Date(run).getHours() + ':' + pad(new Date(run).getMinutes()) : 'Закрой глаза и нажми «Начать»') + '</div>' +
+    '<div id="medt" style="font-family:var(--serif);font-size:52px;line-height:1.1;margin:6px 0">' + (run ? medTime() : '00:00') + '</div>' +
+    '<button class="btn" data-a="med">' + (run ? 'Стоп' : 'Начать') + '</button>' +
+    (todayMeds.length ? '<div style="font-size:12px;margin-top:8px;line-height:1.6">' + todayMeds.map((m) => 'Сегодня: с ' + m.start + ', ' + m.mins + ' мин').join('<br>') + '<br>✓ отмечено в привычках</div>' : '') + '</div>' +
+    '<div class="card"><div class="h">Репетиция дня</div><div class="small" style="font-size:13px;margin-top:4px;line-height:1.5">2–3 минуты с закрытыми глазами.<br>Проживи сегодняшний день так,<br>как прожила бы его новая ты.</div>' +
+    '<button class="chip" data-a="reh" style="margin-top:8px;background:' + (S.reh[d] ? 'var(--mint);color:#0B4A3A' : 'var(--lav);color:#26215C') + '">' + (S.reh[d] ? '✓ прожила' : 'Отметить') + '</button></div>' +
+    '<div class="card" style="display:flex;flex-direction:column;gap:8px"><div class="h">Вечер</div>' +
+    '<label for="ev1" class="small nw">Где сегодня включилась старая я?</label><textarea id="ev1" rows="2" data-bind="ev.old" placeholder="Что случилось и как я среагировала">' + esc(ev.old || '') + '</textarea>' +
+    '<label for="ev2" class="small nw">Как ответила бы новая я?</label><textarea id="ev2" rows="2" data-bind="ev.neu" placeholder="Как бы я хотела поступить">' + esc(ev.neu || '') + '</textarea></div>' +
+    '<div class="card"><div style="font-weight:700" class="nw">Знаки и благодарности</div><div class="small nw">что сегодня сдвинулось к новой жизни</div>' +
+    S.signs.slice(-3).reverse().map((s) => '<div style="font-size:13px;margin-top:6px">' + esc(s.text) + ' <span class="small">· ' + s.date.slice(8) + '.' + s.date.slice(5, 7) + '</span></div>').join('') +
+    '<button class="x" data-a="sign">+ добавить</button></div>' +
+    '<div class="small" style="font-size:11px">по идеям Джо Диспензы</div></div>';
+}
+function medTime() {
+  const s = Math.floor((Date.now() - S.medRun) / 1000);
+  return (s >= 3600 ? Math.floor(s / 3600) + ':' : '') + pad(Math.floor((s % 3600) / 60)) + ':' + pad(s % 60);
+}
+
+function scFaith() {
+  const d = dkey(), cur = S.moods[d] || 'страшно', pr = PRAYERS[cur];
+  const now = new Date(), mon = new Date(now); mon.setDate(now.getDate() - ((now.getDay() + 6) % 7));
+  const week = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'].map((n, i) => { const x = new Date(mon); x.setDate(mon.getDate() + i); const m = S.moods[dkey(x)]; return '<div style="font-size:11px;color:var(--muted)"><div style="width:30px;height:30px;border-radius:50%;margin:0 auto 2px;' + (m ? 'background:' + MOOD_COLOR[m] : 'border:2px dashed #B0A898') + '"></div>' + n + '</div>'; }).join('');
+  return '<div class="stack">' +
+    '<div><div class="title">Вера</div><div class="script" style="color:#8A2E5A;font-size:30px">я не одна</div></div>' +
+    '<div class="card"><div class="small nw" style="color:#8A2E5A">Молитва дня · ' + cur + '</div><div class="prayer" style="margin-top:6px">' + esc(pr[0]) + '</div><div class="small" style="font-size:11px;margin-top:6px">' + pr[1] + '</div></div>' +
+    '<div class="h">Мне сейчас</div><div class="chips">' + Object.keys(PRAYERS).map((m) => '<button class="chip' + (m === cur && S.moods[d] ? ' on' : '') + '" data-a="mood" data-v="' + m + '">' + m + '</button>').join('') + '</div>' +
+    '<div class="row"><button data-a="go" data-v="spiridon" style="border:none;background:var(--lav);border-radius:22px;padding:12px 6px;color:#2E2775"><div style="font-weight:700" class="nw">Спиридону</div><div class="nw" style="font-size:11px">молитва ›</div></button>' +
+    '<button data-a="go" data-v="psalm" style="border:none;background:var(--mint);border-radius:22px;padding:12px 6px;color:#0B4A3A"><div style="font-weight:700" class="nw">Псалом 22</div><div class="nw" style="font-size:11px">«Господь пасет мя» ›</div></button></div>' +
+    '<div class="card"><div style="font-weight:700" class="nw">Моя неделя</div><div style="display:flex;justify-content:center;gap:6px;margin:8px 0 6px">' + week + '</div>' +
+    '<div class="small nw" style="font-size:11px">коралл тревога · розовый боль · сирень нет сил · мята спокойно</div></div>' +
+    '<div class="card"><div style="font-weight:700" class="nw">Мои прошения</div><div class="small nw">о чем молюсь и что сбылось</div>' +
+    S.petitions.slice().reverse().slice(0, 5).map((p) => '<button data-a="petDone" data-id="' + p.id + '" class="item' + (p.done ? ' done' : '') + '" style="margin-top:6px;font-size:13px">' + (p.done ? '✓ сбылось: ' : '') + esc(p.text) + '</button>').join('') +
+    '<button class="x" data-a="pet">+ прошение</button></div></div>';
+}
+
+/* ---------- sub screens ---------- */
+const backBtn = '<button class="back" data-a="back" aria-label="Назад">‹</button>';
+function scTask(t) {
+  const d = t.steps.filter((s) => s.done).length;
+  return '<div class="stack">' + backBtn +
+    '<div><div class="small nw">Задача дня</div><div class="h" style="font-size:' + Math.max(15, Math.min(26, Math.floor(620 / Math.max(1, t.title.length)))) + 'px;margin-top:6px">' + esc(t.title) + '</div></div>' +
+    (t.why ? '<div style="background:var(--lav);border-radius:22px;padding:12px 16px;color:#2E2775"><div class="small nw" style="color:#2E2775">Зачем · сделано ' + d + ' из ' + t.steps.length + '</div><div style="font-weight:700">' + esc(t.why) + '</div></div>' : '') +
+    '<div style="display:flex;flex-direction:column;gap:8px">' + t.steps.map((s, i) => '<button data-a="step" data-id="' + t.id + '" data-v="' + i + '" style="border:none;border-radius:18px;padding:12px 10px;background:' + (s.done ? 'var(--mint);color:#0B4A3A' : '#fff') + '"><div style="font-weight:700;font-size:14px">' + (s.done ? '✓ ' : '') + esc(s.t) + '</div>' + (s.h ? '<div class="small" style="margin-top:2px">' + esc(s.h) + '</div>' : '') + '</button>').join('') + '</div>' +
+    '<button class="dashed" data-a="addStep" data-id="' + t.id + '">+ шаг</button>' +
+    (t.next ? '<div style="background:var(--ink);color:#fff;border-radius:22px;padding:12px 16px"><div class="small nw" style="color:var(--yellow)">Откроется после</div><div style="font-weight:700">' + esc(t.next) + '</div></div>' : '') +
+    '<button class="btn" data-a="taskDone" data-id="' + t.id + '">Задача выполнена</button>' +
+    '<button class="x" data-a="taskDel" data-id="' + t.id + '">удалить задачу</button></div>';
+}
+function scEnv(e) {
+  const i = S.envelopes.indexOf(e);
+  const list = e.entries.slice().sort((a, b) => b.date.localeCompare(a.date));
+  return '<div class="stack">' + backBtn +
+    '<div><div class="title" style="text-transform:lowercase">' + esc(e.name) + '</div><div class="script" style="color:#0B4A3A">мой конверт</div></div>' +
+    '<div style="width:240px;margin:0 auto">' + envSvg(e, i) + '</div>' +
+    '<div class="card"><div class="h" style="margin-bottom:8px">История</div>' + (list.length ? list.map((x) => '<div style="display:flex;align-items:center;justify-content:center;gap:6px;background:var(--cream);border-radius:14px;padding:10px;font-size:14px;margin-top:6px"><span>' + x.date.slice(8) + '.' + x.date.slice(5, 7) + ' · ' + esc(x.note || 'поступление') + ' · <b>' + rub(x.amount) + ' ₽</b></span><button data-a="entDel" data-id="' + e.id + '" data-v="' + x.id + '" aria-label="Удалить" style="border:none;background:none;color:#8A8270;font-size:16px;padding:4px 8px">×</button></div>').join('') : '<div class="small">Пока пусто</div>') + '</div>' +
+    '<button class="btn" data-a="addMoney" data-id="' + e.id + '">+ пришли деньги</button>' +
+    '<div class="row"><button class="x" data-a="envEdit" data-id="' + e.id + '">изменить</button><button class="x" data-a="envDel" data-id="' + e.id + '">удалить конверт</button></div></div>';
+}
+function scIdeas() {
+  return '<div class="stack">' + backBtn +
+    '<div><div class="title">Банк идей</div><div class="script" style="color:#C2410C">мысль и цена, пока не забыла</div></div>' +
+    '<div style="display:flex;flex-direction:column;gap:10px">' + (S.ideas.length ? S.ideas.map((x) => '<div class="card"><div style="font-weight:700">' + esc(x.title) + '</div><div style="font-family:var(--serif);font-size:26px">' + esc(x.price || '') + '</div>' +
+      '<button class="chip" data-a="ideaTask" data-id="' + x.id + '" style="margin-top:6px;background:' + (x.task ? 'var(--mint);color:#0B4A3A' : 'var(--yellow)') + '">' + (x.task ? '✓ уже в задачах' : 'сделать задачей') + '</button> <button class="x" data-a="ideaDel" data-id="' + x.id + '">убрать</button></div>').join('') : '<div class="small">Записывай любую мысль про деньги</div>') + '</div>' +
+    '<button class="dashed" data-a="newIdea">+ новая идея</button></div>';
+}
+function scPsy() {
+  const k = S.psyView != null ? S.psyView : dayNum() % TOPICS.length;
+  const chips = '<div class="chips">' + TOPICS.map((t, i) => '<button class="chip' + (i === k ? ' on' : '') + '" data-a="psyTopic" data-v="' + i + '" style="font-size:12px">' + t.t + '</button>').join('') + '</div>';
+  const src = '<div class="small" style="font-size:11px;line-height:1.5">Источник: исследования Б. Клонца и С. Бритт о денежных сценариях, Journal of Financial Planning; техника проверки мыслей из когнитивно-поведенческой терапии.</div>';
+  let body = '';
+  if (k === 0) body = '<div><div class="h" style="font-size:26px">«Я не умею зарабатывать»</div><div class="script" style="color:#C2410C;font-size:32px">это мысль, а не факт</div></div>' +
+    '<p style="margin:0;font-size:15px;line-height:1.6">Финансовый психолог Брэд Клонц называет такие мысли денежными сценариями. Это убеждения о деньгах, которые мы обычно усваиваем в детстве от родителей, семьи и окружения. Потом они тихо управляют поведением: сколько мы просим за работу, решаемся ли предлагать себя, тратим или копим.</p>' +
+    '<div style="background:var(--yellow);border-radius:22px;padding:16px"><div class="h" style="margin-bottom:10px">4 сценария по Клонцу</div><div style="display:flex;flex-direction:column;gap:10px;font-size:14px;line-height:1.45;color:#3D2E00">' +
+    '<div><b>Избегание</b><br>Иметь меньше «правильнее», и человек сам себе мешает зарабатывать</div><div><b>Поклонение</b><br>Деньги решат все проблемы</div><div><b>Статус</b><br>Сколько денег, столько я стою</div><div><b>Бдительность</b><br>Тревога о деньгах, даже когда они есть</div></div></div>' +
+    '<p style="margin:0;font-size:15px;line-height:1.6">У одного человека может быть сразу несколько сценариев, иногда противоречащих друг другу.<br>Мысли «я не умею зарабатывать» и «большие деньги только через каторжный труд» ближе всего к избеганию.</p>';
+  if (k === 1) body = '<div><div class="h" style="font-size:26px">Как менять сценарий</div><div class="script" style="color:#C2410C;font-size:32px">четыре шага</div></div>' +
+    [['1. Найти, откуда это', 'Что говорили о деньгах дома?\nКто так думал до тебя?'], ['2. Узнать историю семьи', 'Почему у твоих родных были\nтакие взгляды на деньги?'], ['3. Проверить, правда ли это сейчас', 'Убеждение могло быть верным тогда\nи устареть сегодня'], ['4. Замечать, когда оно включается', 'Само осознание уже ослабляет\nпривычную реакцию']]
+      .map((x) => '<div class="card"><div style="font-weight:700" class="nw">' + x[0] + '</div><div class="small" style="font-size:13px;margin-top:2px;line-height:1.5;white-space:pre-line">' + x[1] + '</div></div>').join('');
+  if (k === 2) body = '<div><div class="h" style="font-size:26px">Проверка мысли</div><div class="script" style="color:#C2410C;font-size:32px">упражнение на сегодня</div></div>' +
+    '<p style="margin:0;font-size:15px;line-height:1.6">Базовая техника когнитивно-поведенческой терапии: мысль не заглушают, а проверяют фактами.</p>' +
+    '<div style="background:var(--lav);border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:8px;color:#2E2775">' +
+    '<label for="th1" class="small" style="color:#2E2775">Мысль</label><input id="th1" type="text" placeholder="Я не умею зарабатывать">' +
+    '<label for="th2" class="small" style="color:#2E2775">Факты против</label><textarea id="th2" rows="3" placeholder="Что в моей жизни говорит обратное?"></textarea>' +
+    '<label for="th3" class="small" style="color:#2E2775">Новая мысль</label><input id="th3" type="text" placeholder="Я умею зарабатывать"></div>' +
+    '<button class="btn" data-a="thought">Сохранить проверку</button>' +
+    S.thoughts.slice(-3).reverse().map((x) => '<div class="card" style="font-size:13px;line-height:1.5"><s style="color:#8A8270">' + esc(x.a) + '</s><br><b>' + esc(x.c) + '</b></div>').join('');
+  return '<div class="stack">' + backBtn + '<div class="small nw">Психология денег · тема ' + (k + 1) + ' из ' + TOPICS.length + '</div>' + body + chips + src + '</div>';
+}
+function scText(title, script, text, note) {
+  return '<div class="stack">' + backBtn +
+    '<div><div class="small nw">' + note + '</div><div class="h" style="font-size:28px;margin-top:6px">' + title + '</div><div class="script" style="color:#3C3489">' + script + '</div></div>' +
+    '<div class="card" style="padding:20px 16px"><div class="prayer" style="font-size:19px;line-height:1.45">' + esc(text) + '</div></div>' +
+    '<button class="btn" data-a="prayed">' + (hDone((S.habits.find((h) => h.kind === 'pray') || {}).id) ? '✓ молитва отмечена' : 'Прочитала') + '</button>' +
+    '<div class="small" style="font-size:11px">Текст по православному молитвослову.</div></div>';
+}
+function scSettings() {
+  return '<div class="stack">' + backBtn +
+    '<div><div class="title">Настройки</div><div class="script" style="color:#C2410C">все только в этом телефоне</div></div>' +
+    '<button class="card" data-a="setGoal" style="border:none"><div style="font-weight:700">Цель месяца</div><div class="small">' + rub(S.goal) + ' ₽ · изменить</div></button>' +
+    '<button class="card" data-a="setCushion" style="border:none"><div style="font-weight:700">Подушка свободы</div><div class="small">цель ' + rub(S.cushion.goal) + ' ₽ · изменить</div></button>' +
+    '<button class="card" data-a="setPin" style="border:none"><div style="font-weight:700">Сменить PIN-код</div></button>' +
+    '<button class="btn" data-a="export">Сохранить копию данных</button>' +
+    '<label class="dashed" style="display:block;cursor:pointer">Загрузить копию<input type="file" accept="application/json,.json" data-a="import" style="display:none"></label>' +
+    '<div class="small" style="line-height:1.5">Данные хранятся только в этом телефоне.<br>Раз в неделю сохраняй копию себе в «Файлы».</div>' +
+    '<button class="x" data-a="lock">заблокировать сейчас</button></div>';
+}
+
+/* ---------- render ---------- */
+function render(keepScroll) {
+  const app = $('#app');
+  const old = app.querySelector('.screen');
+  const top = keepScroll && old ? old.scrollTop : 0;
+  let html, bg;
+  if (sub) {
+    const t = sub.type;
+    bg = { task: '#FBF4E4', env: '#DDF3EA', ideas: '#FBF4E4', psy: '#FBF4E4', spiridon: '#E6E3FB', psalm: '#E6E3FB', settings: '#FBF4E4' }[t];
+    if (t === 'task') { const x = S.tasks.find((a) => a.id === sub.id); if (!x) { sub = null; return render(); } html = scTask(x); }
+    if (t === 'env') { const x = S.envelopes.find((a) => a.id === sub.id); if (!x) { sub = null; return render(); } html = scEnv(x); }
+    if (t === 'ideas') html = scIdeas();
+    if (t === 'psy') html = scPsy();
+    if (t === 'spiridon') html = scText('Святителю Спиридону', 'Тримифунтскому Чудотворцу', SPIRIDON, 'Молитва');
+    if (t === 'psalm') html = scText('Псалом 22', 'Господь пасет мя', PSALM22, 'Псалом');
+    if (t === 'settings') html = scSettings();
+    app.innerHTML = '<div class="screen sub" style="background:' + bg + '">' + html + '</div>';
+  } else {
+    bg = TABS[tab].bg;
+    html = [scToday, scMoney, scHabits, scLove, scFaith][tab]();
+    app.innerHTML = '<div class="screen" style="background:' + bg + '">' + html + '</div><nav>' +
+      ICONS.map((ic, i) => '<button data-a="tab" data-v="' + i + '" aria-label="' + TAB_NAMES[i] + '" class="' + (i === tab ? 'on' : '') + '" style="' + (i === tab ? 'background:' + TABS[i].on : '') + '">' + ic + '</button>').join('') + '</nav>';
+  }
+  document.body.style.background = bg;
+  document.querySelector('meta[name=theme-color]').content = bg;
+  if (top) app.querySelector('.screen').scrollTop = top;
+}
+
+/* ---------- sheet (input form) ---------- */
+function ask(title, fields, onSave) {
+  const el = $('#sheet');
+  el.innerHTML = '<div class="sheet-bg" data-close="1"><form class="sheet" onsubmit="return false"><div class="h">' + esc(title) + '</div>' +
+    fields.map((f, i) => '<label class="small" for="f' + i + '">' + esc(f.label) + '</label>' + (f.area ? '<textarea id="f' + i + '" rows="3" placeholder="' + esc(f.ph || '') + '">' + esc(f.val || '') + '</textarea>' : '<input id="f' + i + '" type="' + (f.num ? 'number' : 'text') + '" inputmode="' + (f.num ? 'numeric' : 'text') + '" placeholder="' + esc(f.ph || '') + '" value="' + esc(f.val || '') + '">')).join('') +
+    '<div id="ferr" style="color:#A32D2D;font-size:13px"></div><button class="btn" type="submit" id="fok">Сохранить</button><button class="x" type="button" data-close="1">отмена</button></form></div>';
+  const first = el.querySelector('input,textarea'); if (first) setTimeout(() => first.focus(), 50);
+  el.querySelector('#fok').onclick = () => {
+    const vals = fields.map((f, i) => el.querySelector('#f' + i).value.trim());
+    const bad = fields.findIndex((f, i) => f.req && !vals[i]);
+    if (bad >= 0) { el.querySelector('#ferr').textContent = 'Заполни поле «' + fields[bad].label + '»'; return; }
+    el.innerHTML = ''; onSave(vals.map((v, i) => fields[i].num ? Number(v.replace(/\s/g, '')) || 0 : v)); save(); render(true);
+  };
+  el.onclick = (e) => { if (e.target.dataset.close) el.innerHTML = ''; };
+}
+
+/* ---------- actions ---------- */
+const A = {
+  tab: (v) => { tab = +v; sub = null; render(); },
+  go: (v, id) => { sub = { type: v, id }; render(); },
+  back: () => { sub = null; render(); },
+  quote: () => { S.qShift++; save(); render(true); },
+  hab: (v, id) => { setH(id, !hDone(id)); save(); render(true); },
+  newTask: () => ask('Новая задача', [{ label: 'Что сделать', req: true }, { label: 'Зачем', ph: 'необязательно' }, { label: 'Шаги, каждый с новой строки', area: true, ph: 'необязательно' }], ([t, w, s]) => S.tasks.push({ id: uid(), title: t, why: w, steps: s.split('\n').map((x) => x.trim()).filter(Boolean).map((x) => ({ t: x, done: false })), done: false })),
+  step: (v, id) => { const t = S.tasks.find((x) => x.id === id); t.steps[+v].done = !t.steps[+v].done; save(); render(true); },
+  addStep: (v, id) => ask('Новый шаг', [{ label: 'Шаг', req: true }, { label: 'Подсказка', ph: 'необязательно' }], ([a, b]) => S.tasks.find((x) => x.id === id).steps.push({ t: a, h: b, done: false })),
+  taskDone: (v, id) => { S.tasks.find((x) => x.id === id).done = true; save(); sub = null; render(); },
+  taskDel: (v, id) => { if (confirm('Удалить задачу?')) { S.tasks = S.tasks.filter((x) => x.id !== id); save(); sub = null; render(); } },
+  newEnv: () => ask('Новый конверт', [{ label: 'Название', req: true, ph: 'откуда деньги' }, { label: 'План в месяц, ₽', num: true, ph: 'необязательно' }], ([n, p]) => S.envelopes.push({ id: uid(), name: n, plan: p, entries: [] })),
+  envEdit: (v, id) => { const e = S.envelopes.find((x) => x.id === id); ask('Конверт', [{ label: 'Название', req: true, val: e.name }, { label: 'План в месяц, ₽', num: true, val: e.plan || '' }], ([n, p]) => { e.name = n; e.plan = p; }); },
+  envDel: (v, id) => { if (confirm('Удалить конверт со всей историей?')) { S.envelopes = S.envelopes.filter((x) => x.id !== id); save(); sub = null; render(); } },
+  addMoney: (v, id) => ask('Пришли деньги', [{ label: 'Сумма, ₽', num: true, req: true }, { label: 'За что', ph: 'оклад, размещение, клиент' }], ([a, n]) => S.envelopes.find((x) => x.id === id).entries.push({ id: uid(), date: dkey(), amount: a, note: n })),
+  entDel: (v, id) => { const e = S.envelopes.find((x) => x.id === id); e.entries = e.entries.filter((x) => x.id !== v); save(); render(true); },
+  cushion: () => ask('Подушка свободы', [{ label: 'Сколько уже отложено, ₽', num: true, val: S.cushion.saved }, { label: 'Цель, ₽', num: true, val: S.cushion.goal }], ([s, g]) => { S.cushion.saved = s; S.cushion.goal = g; }),
+  why: () => ask('Ради чего', [{ label: 'Одна фраза, зачем я все это делаю', area: true, val: S.why }], ([w]) => { S.why = w; }),
+  newIdea: () => ask('Новая идея', [{ label: 'Идея', req: true }, { label: 'Примерная цена', ph: '30 000' }], ([t, p]) => S.ideas.push({ id: uid(), title: t, price: p })),
+  ideaTask: (v, id) => { const x = S.ideas.find((i) => i.id === id); if (!x.task) { S.tasks.push({ id: uid(), title: x.title, why: x.price ? 'Цена: ' + x.price : '', steps: [], done: false }); x.task = true; save(); render(true); } },
+  ideaDel: (v, id) => { S.ideas = S.ideas.filter((x) => x.id !== id); save(); render(true); },
+  psyTopic: (v) => { S.psyView = +v; render(); },
+  thought: () => { const a = $('#th1').value.trim(), b = $('#th2').value.trim(), c = $('#th3').value.trim(); if (!a || !c) { alert('Заполни мысль и новую мысль'); return; } S.thoughts.push({ date: dkey(), a, b, c }); save(); render(true); },
+  feel: (v) => { S.feel[dkey()] = v; save(); render(true); },
+  nmTopic: (v) => { S.nmTopic = +v; save(); render(true); },
+  reh: () => { const d = dkey(); if (S.reh[d]) delete S.reh[d]; else S.reh[d] = true; save(); render(true); },
+  med: () => {
+    if (S.medRun) {
+      const st = new Date(S.medRun), mins = Math.max(1, Math.round((Date.now() - S.medRun) / 60000));
+      S.meds.push({ date: dkey(st), start: st.getHours() + ':' + pad(st.getMinutes()), mins });
+      S.medRun = null; markKind('med');
+    } else S.medRun = Date.now();
+    save(); render(true);
+  },
+  sign: () => ask('Знак или благодарность', [{ label: 'Что сегодня сдвинулось?', area: true, req: true }], ([t]) => S.signs.push({ date: dkey(), text: t })),
+  mood: (v) => { S.moods[dkey()] = v; save(); render(true); },
+  pet: () => ask('Прошение', [{ label: 'О чем молюсь', area: true, req: true }], ([t]) => S.petitions.push({ id: uid(), text: t, done: false, date: dkey() })),
+  petDone: (v, id) => { const p = S.petitions.find((x) => x.id === id); p.done = !p.done; save(); render(true); },
+  prayed: () => { markKind('pray'); save(); render(true); },
+  setGoal: () => ask('Цель месяца', [{ label: 'Сколько мне нужно в месяц, ₽', num: true, val: S.goal }], ([g]) => { S.goal = g; }),
+  setCushion: () => A.cushion(),
+  setPin: () => { S.pin = null; save(); lock(); },
+  export: async () => {
+    const blob = new Blob([JSON.stringify(S, null, 1)], { type: 'application/json' });
+    const name = 'sama-' + dkey() + '.json';
+    try { const f = new File([blob], name, { type: 'application/json' }); if (navigator.canShare && navigator.canShare({ files: [f] })) { await navigator.share({ files: [f], title: 'sama' }); return; } } catch (e) { if (e.name === 'AbortError') return; }
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.click();
+  },
+  lock: () => lock()
+};
+
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-a]');
+  if (!b || b.tagName === 'INPUT') return;
+  const f = A[b.dataset.a]; if (f) f(b.dataset.v, b.dataset.id);
+});
+document.addEventListener('change', (e) => {
+  if (e.target.dataset.a !== 'import') return;
+  const file = e.target.files[0]; if (!file) return;
+  file.text().then((t) => {
+    try { const d = JSON.parse(t); if (!d || typeof d !== 'object' || !('envelopes' in d)) throw 0; if (!confirm('Заменить текущие данные данными из копии?')) return; const pin = S.pin; S = Object.assign(fresh(), d); S.pin = pin; save(); sub = null; tab = 0; render(); alert('Готово, данные загружены'); }
+    catch (err) { alert('Это не похоже на копию sama'); }
+  });
+});
+document.addEventListener('input', (e) => {
+  const b = e.target.dataset.bind; if (!b) return;
+  const d = dkey(), v = e.target.value;
+  if (b === 'newMe') { if (v) S.newMe[d] = v; else delete S.newMe[d]; }
+  if (b.startsWith('ev.')) { S.evening[d] = S.evening[d] || {}; S.evening[d][b.slice(3)] = v; }
+  save();
+});
+
+/* swipe between tabs */
+let sx = 0, sy = 0, st0 = 0;
+document.addEventListener('touchstart', (e) => { const t = e.touches[0]; sx = t.clientX; sy = t.clientY; st0 = Date.now(); }, { passive: true });
+document.addEventListener('touchend', (e) => {
+  if ($('#sheet').innerHTML || $('#lock').innerHTML) return;
+  if (['INPUT', 'TEXTAREA'].includes(document.activeElement && document.activeElement.tagName)) return;
+  const t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
+  if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5 || Date.now() - st0 > 700) return;
+  if (sub) { if (dx > 0) { sub = null; render(); } return; }
+  const n = tab + (dx < 0 ? 1 : -1);
+  if (n >= 0 && n < TABS.length) { tab = n; render(); }
+}, { passive: true });
+
+/* meditation clock */
+setInterval(() => { const el = $('#medt'); if (el && S.medRun) el.textContent = medTime(); }, 1000);
+
+/* ---------- PIN ---------- */
+async function hash(p) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('sama:' + p)); return Array.from(new Uint8Array(b)).map((x) => x.toString(16).padStart(2, '0')).join(''); }
+function lock() {
+  let val = '', first = null;
+  const el = $('#lock');
+  const draw = (msg) => {
+    const setting = !S.pin;
+    el.innerHTML = '<div class="pin"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" aria-hidden="true"><path d="M12 1v1.6M7.2 2.8l1 1.2M16.8 2.8l-1 1.2M4.6 6.4l1.4.5M19.4 6.4l-1.4.5" stroke="#F4B6D2"/><g stroke="#FBF4E4"><circle cx="12" cy="7.4" r="2.3"/><path d="M7.6 17v-3c0-2.4 2-3.4 4.4-3.4s4.4 1 4.4 3.4v3"/><path d="M12 12.2v3.6"/><path d="M4 19.4c0-2.3 4-2.8 8-.8 4-2 8-1.5 8 .8 0 1.6-3 1.6-8-.4-5 2-8 2-8 .4z"/></g></svg>' +
+      '<div><div class="title" style="color:var(--cream)">sama</div><div class="script" style="color:var(--pink)">' + (msg || (setting ? (first ? 'повтори PIN' : 'придумай PIN из 4 цифр') : 'введи PIN')) + '</div></div>' +
+      '<div class="dots">' + [0, 1, 2, 3].map((i) => '<span class="' + (i < val.length ? 'f' : '') + '"></span>').join('') + '</div>' +
+      '<div class="keys">' + [1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => '<button data-k="' + n + '">' + n + '</button>').join('') + '<span></span><button data-k="0">0</button><button class="t" data-k="del">стереть</button></div></div>';
+  };
+  draw();
+  el.onclick = async (e) => {
+    const k = e.target.closest('[data-k]'); if (!k) return;
+    if (k.dataset.k === 'del') { val = val.slice(0, -1); draw(); return; }
+    if (val.length >= 4) return;
+    val += k.dataset.k; draw();
+    if (val.length < 4) return;
+    const h = await hash(val);
+    if (!S.pin) {
+      if (!first) { first = h; val = ''; draw(); return; }
+      if (first === h) { S.pin = h; save(); el.innerHTML = ''; render(); return; }
+      first = null; val = ''; draw('не совпало, давай заново'); return;
+    }
+    if (h === S.pin) { el.innerHTML = ''; render(true); } else { val = ''; setTimeout(() => draw('неверно, попробуй еще'), 150); }
+  };
+}
+let hiddenAt = 0;
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) hiddenAt = Date.now();
+  else { if (hiddenAt && Date.now() - hiddenAt > 60000 && !$('#lock').innerHTML) lock(); if (!$('#lock').innerHTML) render(true); }
+});
+
+render();
+lock();
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+</script>
+</body>
+</html>
